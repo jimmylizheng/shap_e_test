@@ -13,8 +13,6 @@ import re
 import matplotlib.pyplot as plt
 import threading
 
-stop_flag=False
-
 def get_gpu_memory_usage():
     output = subprocess.check_output(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,nounits,noheader'])
     memory_used = re.findall(r'\d+', output.decode('utf-8'))
@@ -40,17 +38,13 @@ class GPU_moniter:
     """
     def __init__(self, interval=1):
         """Initialize GPU_moniter."""
+        self.stop_flag=False
         self.memory_usage_data = []
         self.start_time = time.time()
         self.interval = interval
         # Create and start the monitoring thread
-        monitor_thread = threading.Thread(target=self.monitor_memory)
-        monitor_thread.start()
-
-        # Wait for the monitoring thread to complete
-        monitor_thread.join()
-
-        plot_memory_usage(self.memory_usage_data)
+        self.monitor_thread = threading.Thread(target=self.monitor_memory)
+        self.monitor_thread.start()
         
     def monitor_memory(self):
         while True:
@@ -66,6 +60,14 @@ class GPU_moniter:
             if stop_flag:
                 break
             time.sleep(self.interval)
+    
+    def end_monitor(self):
+        self.stop_flag=True
+        
+        # Wait for the monitoring thread to complete
+        self.monitor_thread.join()
+
+        plot_memory_usage(self.memory_usage_data)
     
 def monitor_gpu_memory_usage(interval=1):
     """
@@ -102,9 +104,7 @@ def monitor_gpu_memory_usage(interval=1):
     plot_memory_usage(memory_usage_data)
 
 def main():
-    stop_flag=False
-    
-    GPU_moniter(1)
+    gpu_moniter=GPU_moniter(1)
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
@@ -173,7 +173,7 @@ def main():
     print(f"GPU Memory Usage for Rendering: {rendering_gpu_memory} MiB")
     print(f"Total GPU Memory Usage: {gpu_memory} MiB")
     
-    stop_flag=True
+    gpu_moniter.end_monitor()
     
     # Example of saving the latents as meshes.
     # for i, latent in enumerate(latents):
