@@ -10,13 +10,69 @@ import time
 import psutil
 import subprocess
 import re
+import matplotlib.pyplot as plt
+import threading
+
+stop_flag=False
 
 def get_gpu_memory_usage():
     output = subprocess.check_output(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,nounits,noheader'])
     memory_used = re.findall(r'\d+', output.decode('utf-8'))
     return int(memory_used[0])
 
+def plot_memory_usage(memory_usage_data):
+    """
+    Plot the memory usage graph.
+    """
+    timestamps = [t for t, _ in memory_usage_data]
+    memory_usages = [m for _, m in memory_usage_data]
+
+    plt.plot(timestamps, memory_usages)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Memory Usage (bytes)')
+    plt.title('GPU Memory Usage')
+    plt.grid(True)
+    plt.show()
+    
+def monitor_gpu_memory_usage(interval=1):
+    """
+    Monitor the GPU memory usage every 'interval' seconds until the program completes.
+    """
+    memory_usage_data = []
+    start_time = time.time()
+
+    def monitor_memory():
+        nonlocal memory_usage_data
+        nonlocal start_time
+
+        while True:
+            memory_usage = get_gpu_memory_usage()
+            if memory_usage is not None:
+                current_time = time.time() - start_time
+                memory_usage_data.append((current_time, memory_usage))
+                print(f'Time: {current_time:.2f}s, Memory Usage: {memory_usage} bytes')
+            else:
+                print('Failed to retrieve GPU memory usage.')
+
+            # Check if the program has completed
+            if stop_flag:
+                break
+            time.sleep(interval)
+
+    # Create and start the monitoring thread
+    monitor_thread = threading.Thread(target=monitor_memory)
+    monitor_thread.start()
+
+    # Wait for the monitoring thread to complete
+    monitor_thread.join()
+
+    plot_memory_usage(memory_usage_data)
+
 def main():
+    stop_flag=False
+    
+    monitor_gpu_memory_usage(1)
+    
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     gpu_memory = get_gpu_memory_usage()
@@ -83,6 +139,8 @@ def main():
     rendering_gpu_memory=gpu_memory-old_gpu_memory
     print(f"GPU Memory Usage for Rendering: {rendering_gpu_memory} MiB")
     print(f"Total GPU Memory Usage: {gpu_memory} MiB")
+    
+    stop_flag=True
     
     # Example of saving the latents as meshes.
     # for i, latent in enumerate(latents):
