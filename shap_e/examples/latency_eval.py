@@ -120,8 +120,6 @@ class GPU_moniter:
             # plot_memory_usage(self.ecc_mem_data)
 
 def main():
-    gpu_moniter=GPU_moniter(1)
-    
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     gpu_memory = get_gpu_memory_usage()
@@ -141,71 +139,55 @@ def main():
     
     batch_size = 1
     guidance_scale = 15.0
-    prompt = "a shark"
-
-    latents = sample_latents(
-        batch_size=batch_size,
-        model=model,
-        diffusion=diffusion,
-        guidance_scale=guidance_scale,
-        model_kwargs=dict(texts=[prompt] * batch_size),
-        progress=True,
-        clip_denoised=True,
-        use_fp16=True,
-        use_karras=True,
-        karras_steps=64,
-        sigma_min=1e-3,
-        sigma_max=160,
-        s_churn=0,
-    )
     
-    print("end timing deffusion process")
-    end_time=time.time()
-    duration=end_time-start_time
-    print(f"runtime for diffusion process: {duration} seconds")
-    
-    gpu_memory = get_gpu_memory_usage()
-    diffusion_gpu_memory = gpu_memory - model_gpu_memory
-    print(f"GPU Memory Usage for Diffusion: {diffusion_gpu_memory} MiB")
-    
-    print(f"Total GPU Memory Usage before rendering: {gpu_memory} MiB")
-    print("start timing rendering process")
-    start_time=time.time()
-    
-    render_mode = 'nerf' # you can change this to 'stf'
-    size = 64 # this is the size of the renders; higher values take longer to render.
-
-    cameras = create_pan_cameras(size, device)
-    for i, latent in enumerate(latents):
-        images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
-        # display(gif_widget(images))
+    prompts = ["a shark"]
+    for prompt in prompts:
+        gpu_memory = get_gpu_memory_usage()
+        print(f"Current GPU Memory Usage: {gpu_memory} MiB")
         
-    print("end timing rendering process")
-    end_time=time.time()
-    duration=end_time-start_time
-    print(f"runtime for rendering process: {duration} seconds")
+        # print("start timing deffusion process")
+        start_time=time.time()
+        
+        latents = sample_latents(
+            batch_size=batch_size,
+            model=model,
+            diffusion=diffusion,
+            guidance_scale=guidance_scale,
+            model_kwargs=dict(texts=[prompt] * batch_size),
+            progress=True,
+            clip_denoised=True,
+            use_fp16=True,
+            use_karras=True,
+            karras_steps=64,
+            sigma_min=1e-3,
+            sigma_max=160,
+            s_churn=0,
+        )
     
-    old_gpu_memory=gpu_memory
+        # print("end timing deffusion process")
+        end_time=time.time()
+        duration=end_time-start_time
+        print(f"For prompt {prompt}, runtime for diffusion process: {duration} seconds")
+    
+        start_time=time.time()
+    
+        render_mode = 'nerf' # you can change this to 'stf'
+        size = 64 # this is the size of the renders; higher values take longer to render.
+
+        cameras = create_pan_cameras(size, device)
+        for i, latent in enumerate(latents):
+            images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
+            # display(gif_widget(images))
+        
+        end_time=time.time()
+        duration=end_time-start_time
+        print(f"runtime for rendering process: {duration} seconds")
+        
+        gpu_memory = get_gpu_memory_usage()
+        print(f"Current GPU Memory Usage: {gpu_memory} MiB")
+    
     gpu_memory = get_gpu_memory_usage()
-    rendering_gpu_memory=gpu_memory-old_gpu_memory
-    print(f"GPU Memory Usage for Rendering: {rendering_gpu_memory} MiB")
-    print(f"Total GPU Memory Usage: {gpu_memory} MiB")
-    
-    gpu_moniter.end_monitor()
-    print("Total GPU Memory Usage")
-    gpu_moniter.mem_plot()
-    print("Util GPU Memory Usage")
-    gpu_moniter.mem_plot('util')
-    print("Volatile GPU Memory Usage")
-    gpu_moniter.mem_plot('vol')
-    
-    # Example of saving the latents as meshes.
-    # for i, latent in enumerate(latents):
-    #     t = decode_latent_mesh(xm, latent).tri_mesh()
-    #     with open(f'example_mesh_{i}.ply', 'wb') as f:
-    #         t.write_ply(f)
-    #     with open(f'example_mesh_{i}.obj', 'w') as f:
-    #         t.write_obj(f)
+    print(f"Current GPU Memory Usage: {gpu_memory} MiB")
     
 if __name__=="__main__":
     main()
