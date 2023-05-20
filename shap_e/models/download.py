@@ -145,5 +145,12 @@ def load_model(
 
     model = model_from_config(load_config(model_name, **kwargs), device=device)
     model.load_state_dict(load_checkpoint(model_name, device=device, **kwargs))
+    
+    total_para_nums = 0
+    for param in model.parameters():
+        if param.requires_grad:
+            total_para_nums += param.numel()
+    print(f"Total number of parameters for {model_name} is {total_para_nums}")
+    
     model.eval()
     return model
