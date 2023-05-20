@@ -34,6 +34,39 @@ def plot_memory_usage(memory_usage_data):
     plt.grid(True)
     plt.show()
     
+class GPU_moniter:
+    """
+    Monitor the GPU memory usage every 'interval' seconds until the program completes.
+    """
+    def __init__(self, interval=1):
+        """Initialize GPU_moniter."""
+        self.memory_usage_data = []
+        self.start_time = time.time()
+        self.interval = interval
+        # Create and start the monitoring thread
+        monitor_thread = threading.Thread(target=self.monitor_memory)
+        monitor_thread.start()
+
+        # Wait for the monitoring thread to complete
+        monitor_thread.join()
+
+        plot_memory_usage(self.memory_usage_data)
+        
+    def monitor_memory(self):
+        while True:
+            memory_usage = get_gpu_memory_usage()
+            if memory_usage is not None:
+                current_time = time.time() - self.start_time
+                self.memory_usage_data.append((current_time, memory_usage))
+                print(f'Time: {current_time:.2f}s, Memory Usage: {memory_usage} bytes')
+            else:
+                print('Failed to retrieve GPU memory usage.')
+
+            # Check if the program has completed
+            if stop_flag:
+                break
+            time.sleep(self.interval)
+    
 def monitor_gpu_memory_usage(interval=1):
     """
     Monitor the GPU memory usage every 'interval' seconds until the program completes.
@@ -71,7 +104,7 @@ def monitor_gpu_memory_usage(interval=1):
 def main():
     stop_flag=False
     
-    monitor_gpu_memory_usage(1)
+    GPU_moniter(1)
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
