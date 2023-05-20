@@ -45,6 +45,7 @@ class GPU_moniter:
         # Create and start the monitoring thread
         self.monitor_thread = threading.Thread(target=self.monitor_memory)
         self.monitor_thread.start()
+        print("Start GPU Moniter")
         
     def monitor_memory(self):
         while True:
@@ -85,7 +86,7 @@ def monitor_gpu_memory_usage(interval=1):
             if memory_usage is not None:
                 current_time = time.time() - start_time
                 memory_usage_data.append((current_time, memory_usage))
-                print(f'Time: {current_time:.2f}s, Memory Usage: {memory_usage} bytes')
+                # print(f'Time: {current_time:.2f}s, Memory Usage: {memory_usage} bytes')
             else:
                 print('Failed to retrieve GPU memory usage.')
 
