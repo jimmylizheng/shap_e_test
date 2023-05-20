@@ -91,3 +91,6 @@ def main():
     #         t.write_ply(f)
     #     with open(f'example_mesh_{i}.obj', 'w') as f:
     #         t.write_obj(f)
+    
+if __name__=="__main__":
+    main()
