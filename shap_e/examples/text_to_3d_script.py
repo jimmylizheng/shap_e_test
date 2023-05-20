@@ -57,7 +57,7 @@ class GPU_moniter:
                 print('Failed to retrieve GPU memory usage.')
 
             # Check if the program has completed
-            if stop_flag:
+            if self.stop_flag:
                 break
             time.sleep(self.interval)
     
@@ -90,9 +90,9 @@ def monitor_gpu_memory_usage(interval=1):
                 print('Failed to retrieve GPU memory usage.')
 
             # Check if the program has completed
-            if stop_flag:
-                break
-            time.sleep(interval)
+            # if stop_flag:
+            #     break
+            # time.sleep(interval)
 
     # Create and start the monitoring thread
     monitor_thread = threading.Thread(target=monitor_memory)
