@@ -12,6 +12,8 @@ import subprocess
 import re
 import matplotlib.pyplot as plt
 import threading
+from IPython.display import display, Image
+import io
 
 def get_gpu_memory_usage():
     output = subprocess.check_output(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,nounits,noheader'])
@@ -185,6 +187,10 @@ def main():
     for i, latent in enumerate(latents):
         images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
         # display(gif_widget(images))
+    for image in images:
+        data = io.BytesIO()
+        image.save(data, format='PNG')
+        display(Image(data=data.getvalue()))
     
     if timing_mode:
         print("end timing rendering process")
