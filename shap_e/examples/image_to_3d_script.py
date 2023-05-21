@@ -4,7 +4,7 @@ from shap_e.diffusion.sample import sample_latents
 from shap_e.diffusion.gaussian_diffusion import diffusion_from_config
 from shap_e.models.download import load_model, load_config
 from shap_e.util.notebooks import create_pan_cameras, decode_latent_images, gif_widget
-from shap_e.util.notebooks import decode_latent_mesh
+from shap_e.util.image_util import load_image
 
 import time
 import psutil
@@ -126,10 +126,15 @@ def main():
     if gpu_mode:
         gpu_memory = get_gpu_memory_usage()
     
-    # model parameter counts added inside load_model function
     xm = load_model('transmitter', device=device)
-    model = load_model('text300M', device=device)
+    model = load_model('image300M', device=device)
     diffusion = diffusion_from_config(load_config('diffusion'))
+    
+    batch_size = 4
+    guidance_scale = 3.0
+
+    # To get the best result, you should remove the background and show only the object of interest to the model.
+    image = load_image("example_data/corgi.png")
     
     if gpu_mode:
         old_gpu_memory=gpu_memory
@@ -141,17 +146,13 @@ def main():
     if timing_mode:
         print("start timing deffusion process")
         start_time=time.time()
-    
-    batch_size = 1
-    guidance_scale = 15.0
-    prompt = "a shark"
 
     latents = sample_latents(
         batch_size=batch_size,
         model=model,
         diffusion=diffusion,
         guidance_scale=guidance_scale,
-        model_kwargs=dict(texts=[prompt] * batch_size),
+        model_kwargs=dict(images=[image] * batch_size),
         progress=True,
         clip_denoised=True,
         use_fp16=True,
@@ -178,14 +179,14 @@ def main():
         print("start timing rendering process")
         start_time=time.time()
     
-    render_mode = 'nerf' # you can change this to 'stf'
+    render_mode = 'nerf' # you can change this to 'stf' for mesh rendering
     size = 64 # this is the size of the renders; higher values take longer to render.
 
     cameras = create_pan_cameras(size, device)
     for i, latent in enumerate(latents):
         images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
         # display(gif_widget(images))
-    
+        
     if timing_mode:
         print("end timing rendering process")
         end_time=time.time()
@@ -209,14 +210,6 @@ def main():
         gpu_moniter.mem_plot('vol')
         print("GPU Power Consumption")
         gpu_moniter.mem_plot('power')
-    
-    # Example of saving the latents as meshes.
-    # for i, latent in enumerate(latents):
-    #     t = decode_latent_mesh(xm, latent).tri_mesh()
-    #     with open(f'example_mesh_{i}.ply', 'wb') as f:
-    #         t.write_ply(f)
-    #     with open(f'example_mesh_{i}.obj', 'w') as f:
-    #         t.write_obj(f)
     
 if __name__=="__main__":
     main()
