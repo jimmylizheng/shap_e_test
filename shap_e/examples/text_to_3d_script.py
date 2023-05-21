@@ -120,6 +120,7 @@ class GPU_moniter:
 def main():
     gpu_mode=False
     timing_mode=False
+    save_fig=False
     if gpu_mode:
         gpu_moniter=GPU_moniter(1)
     
@@ -191,7 +192,11 @@ def main():
         data = io.BytesIO()
         image.save(data, format='PNG')
         display(Image(data=data.getvalue()))
-    
+    if save_fig:
+        for i, image in enumerate(images):
+            filename = f"shap_e_output_fig_{i}.png"
+            image.save(filename, format='PNG')
+        
     if timing_mode:
         print("end timing rendering process")
         end_time=time.time()
