@@ -5,7 +5,7 @@ def main():
     # file_list=['base40M-textvec-out.json','base40M-out.json','base300M-out.json','base1B-out.json']
     file_list=[]
     label_dict={}
-    for w1 in ['img','text']:
+    for w1 in ['img']: # ['img','text']
         for w2 in ['dec','trans']:
             for w3 in ['nerf','stf']:
                 temp_str1=w1+"-"+w2+"-"+w3+"-out.json"
@@ -37,6 +37,16 @@ def main():
         measured_val = [m for _, m in data]
         plt.plot(timestamps, measured_val,label=label_dict[file_name],linewidth=3)
     
+    # data points for img based model
+    plt.scatter(46.63408136367798, 2891,c='black',s=20,zorder=10,marker='s')
+    plt.scatter(46.63408136367798, 2891,c='black',s=20,zorder=10,marker='s')
+    plt.scatter(46.63408136367798, 2891,c='black',s=20,zorder=10,marker='s')
+    plt.scatter(46.63408136367798, 2891,c='black',s=20,zorder=10,marker='s')
+
+    # plt.scatter(241.634019613266, 5841,c='black',s=20,zorder=10,marker='^')
+    
+    plt.xlim(0,500)
+    plt.ylim(0,13000)
     plt.xticks(fontsize=12)
     plt.yticks(fontsize=12)
     plt.legend(fontsize=12,loc='lower right')
