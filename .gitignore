@@ -3,5 +3,6 @@ __pycache__/
 *.egg-info/
 /env
 *.png
-*.json
+# *.json
+/memory_data
 *.txt
