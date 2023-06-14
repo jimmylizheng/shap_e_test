@@ -146,7 +146,7 @@ def main():
     with open(file_path, 'r') as file:
         coco_data = json.load(file)
     
-        data_count=0
+    data_count=0
     
     for data in coco_data:
         if data_count>=3:
