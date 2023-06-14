@@ -114,12 +114,10 @@ class GPU_moniter:
             plot_measurement(self.vol_mem_usage_data)
         elif mode=='power':
             plot_measurement(self.power_data,'Time (s)','GPU Power Consumption (W)','GPU Power Consumption')
-        # elif mode=='ecc':
-            # plot_memory_usage(self.ecc_mem_data)
 
 def main():
     gpu_mode=False
-    timing_mode=False
+    timing_mode=True
     save_fig=False
     if gpu_mode:
         gpu_moniter=GPU_moniter(1)

@@ -8,3 +8,4 @@ __pycache__/
 *.txt
 /shap_e_model_cache
 *.jpg
+/data_result

@@ -124,6 +124,8 @@ def main():
         gpu_memory = get_gpu_memory_usage()
     
     # model parameter counts added inside load_model function
+    # xm = load_model('transmitter', device=device)
+    # model = load_model('text300M', device=device)
     xm = load_model('transmitter', device=device)
     model = load_model('text300M', device=device)
     diffusion = diffusion_from_config(load_config('diffusion'))
@@ -149,7 +151,7 @@ def main():
     data_count=0
     
     for data in coco_data:
-        if data_count>=3:
+        if data_count>=1:
             diffusion_latency=0
             rendering_latency=0
             for key in time_record:
@@ -159,9 +161,11 @@ def main():
                 rendering_latency+=time_record[key]['rendering_latency']
             diffusion_latency=diffusion_latency/data_count
             rendering_latency=rendering_latency/data_count
-            print(time_record)
-            print(f"diffusion_latency={diffusion_latency}")
-            print(f"renderinging_latency={rendering_latency}")
+            outfile = open("shap_e_text_transmitter_stf.txt", "a")
+            print(time_record, file=outfile)
+            print(f"diffusion_latency={diffusion_latency} seconds", file=outfile)
+            print(f"renderinging_latency={rendering_latency} seconds", file=outfile)
+            outfile.close()
             break
     
         data_count+=1
@@ -206,7 +210,7 @@ def main():
             print("start timing rendering process")
             start_time=time.time()
     
-        render_mode = 'nerf' # you can change this to 'stf'
+        render_mode = 'stf' # you can change this to 'stf'
         size = 64 # this is the size of the renders; higher values take longer to render.
         
         time_record[data['image_id']]['rendering_begin']=time.time()
@@ -216,10 +220,10 @@ def main():
             # display(gif_widget(images))
         time_record[data['image_id']]['rendering_end']=time.time()
         
-        for image in images:
-            data = io.BytesIO()
-            image.save(data, format='PNG')
-            display(Image(data=data.getvalue()))
+        # for image in images:
+        #     data = io.BytesIO()
+        #     image.save(data, format='PNG')
+        #     display(Image(data=data.getvalue()))
         if save_fig:
             for i, image in enumerate(images):
                 filename = f"shap_e_output_fig_{i}.png"
