@@ -7,3 +7,4 @@ __pycache__/
 /memory_data
 *.txt
 /shap_e_model_cache
+*.jpg
