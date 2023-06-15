@@ -17,6 +17,7 @@ import io
 import json
 import os
 import urllib.request
+from urllib.error import HTTPError
 import tempfile
 
 def get_gpu_memory_usage():
@@ -145,7 +146,7 @@ def main():
     with tempfile.TemporaryDirectory() as temp_dir:
         print("Temporary directory created:", temp_dir)
         for data in coco_img_data['images']:
-            if data_count>=1:
+            if data_count>=100:
                 diffusion_latency=0
                 rendering_latency=0
                 for key in time_record:
@@ -168,106 +169,111 @@ def main():
             batch_size = 1
             guidance_scale = 3.0
             
-            # time_record['current_id']=data['id']
-            img_url=data['url']
-            filename = os.path.basename(img_url)
-            image_path = os.path.join(temp_dir, filename)
-            urllib.request.urlretrieve(img_url, image_path)
-            # img = Image.open(image_path)
+            try:
+                # time_record['current_id']=data['id']
+                img_url=data['url']
+                filename = os.path.basename(img_url)
+                image_path = os.path.join(temp_dir, filename)
+                urllib.request.urlretrieve(img_url, image_path)
+                # img = Image.open(image_path)
 
-            # To get the best result, you should remove the background and show only the object of interest to the model.
-            # image = load_image("./shap_e/examples/example_data/corgi.png")
-            image = load_image(image_path)
-            
-            if gpu_mode:
-                old_gpu_memory=gpu_memory
-                gpu_memory = get_gpu_memory_usage()
-                model_gpu_memory = gpu_memory-old_gpu_memory
-                print(f"GPU Memory Usage for Loading Model: {model_gpu_memory} MiB")
-                print(f"Total GPU Memory Usage before diffusion: {gpu_memory} MiB")
-            
-            if timing_mode:
-                print("start timing deffusion process")
-                start_time=time.time()
+                # To get the best result, you should remove the background and show only the object of interest to the model.
+                # image = load_image("./shap_e/examples/example_data/corgi.png")
+                image = load_image(image_path)
                 
-            time_record[data['id']]={}
-            time_record[data['id']]['diffusion_begin']=time.time()
-            
-            latents = sample_latents(
-                batch_size=batch_size,
-                model=model,
-                diffusion=diffusion,
-                guidance_scale=guidance_scale,
-                model_kwargs=dict(images=[image] * batch_size),
-                progress=True,
-                clip_denoised=True,
-                use_fp16=True,
-                use_karras=True,
-                karras_steps=64,
-                sigma_min=1e-3,
-                sigma_max=160,
-                s_churn=0,
-            )
-            time_record[data['id']]['diffusion_end']=time.time()
-            
-            if timing_mode:
-                print("end timing deffusion process")
-                end_time=time.time()
-                duration=end_time-start_time
-                print(f"runtime for diffusion process: {duration} seconds")
-            
-            if gpu_mode:
-                gpu_memory = get_gpu_memory_usage()
-                diffusion_gpu_memory = gpu_memory - model_gpu_memory
-                print(f"GPU Memory Usage for Diffusion: {diffusion_gpu_memory} MiB")
-                print(f"Total GPU Memory Usage before rendering: {gpu_memory} MiB")
-            
-            if timing_mode:
-                print("start timing rendering process")
-                start_time=time.time()
-            
-            render_mode = 'nerf' # you can change this to 'stf' for mesh rendering
-            size = 64 # this is the size of the renders; higher values take longer to render.
-            
-            time_record[data['id']]['rendering_begin']=time.time()
-            cameras = create_pan_cameras(size, device)
-            for i, latent in enumerate(latents):
-                images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
-                # display(gif_widget(images))
-            time_record[data['id']]['rendering_end']=time.time()
-            
-            # for image in images:
-            #     data = io.BytesIO()
-            #     image.save(data, format='PNG')
-            #     display(Image(data=data.getvalue()))
-            if save_fig:
-                for i, image in enumerate(images):
-                    filename = f"shap_e_output_fig_{i}.png"
-                    image.save(filename, format='PNG')
+                if gpu_mode:
+                    old_gpu_memory=gpu_memory
+                    gpu_memory = get_gpu_memory_usage()
+                    model_gpu_memory = gpu_memory-old_gpu_memory
+                    print(f"GPU Memory Usage for Loading Model: {model_gpu_memory} MiB")
+                    print(f"Total GPU Memory Usage before diffusion: {gpu_memory} MiB")
                 
-            if timing_mode:
-                print("end timing rendering process")
-                end_time=time.time()
-                duration=end_time-start_time
-                print(f"runtime for rendering process: {duration} seconds")
-            
-            if gpu_mode:
-                old_gpu_memory=gpu_memory
-                gpu_memory = get_gpu_memory_usage()
-                rendering_gpu_memory=gpu_memory-old_gpu_memory
-                print(f"GPU Memory Usage for Rendering: {rendering_gpu_memory} MiB")
-                print(f"Total GPU Memory Usage: {gpu_memory} MiB")
-            
-            if gpu_mode:
-                gpu_moniter.end_monitor()
-                print("Total GPU Memory Usage")
-                gpu_moniter.mem_plot()
-                print("Util GPU Memory Usage")
-                gpu_moniter.mem_plot('util')
-                print("Volatile GPU Memory Usage")
-                gpu_moniter.mem_plot('vol')
-                print("GPU Power Consumption")
-                gpu_moniter.mem_plot('power')
+                if timing_mode:
+                    print("start timing deffusion process")
+                    start_time=time.time()
+                    
+                time_record[data['id']]={}
+                time_record[data['id']]['diffusion_begin']=time.time()
+                
+                latents = sample_latents(
+                    batch_size=batch_size,
+                    model=model,
+                    diffusion=diffusion,
+                    guidance_scale=guidance_scale,
+                    model_kwargs=dict(images=[image] * batch_size),
+                    progress=True,
+                    clip_denoised=True,
+                    use_fp16=True,
+                    use_karras=True,
+                    karras_steps=64,
+                    sigma_min=1e-3,
+                    sigma_max=160,
+                    s_churn=0,
+                )
+                time_record[data['id']]['diffusion_end']=time.time()
+                
+                if timing_mode:
+                    print("end timing deffusion process")
+                    end_time=time.time()
+                    duration=end_time-start_time
+                    print(f"runtime for diffusion process: {duration} seconds")
+                
+                if gpu_mode:
+                    gpu_memory = get_gpu_memory_usage()
+                    diffusion_gpu_memory = gpu_memory - model_gpu_memory
+                    print(f"GPU Memory Usage for Diffusion: {diffusion_gpu_memory} MiB")
+                    print(f"Total GPU Memory Usage before rendering: {gpu_memory} MiB")
+                
+                if timing_mode:
+                    print("start timing rendering process")
+                    start_time=time.time()
+                
+                render_mode = 'nerf' # you can change this to 'stf' for mesh rendering
+                size = 64 # this is the size of the renders; higher values take longer to render.
+                
+                time_record[data['id']]['rendering_begin']=time.time()
+                cameras = create_pan_cameras(size, device)
+                for i, latent in enumerate(latents):
+                    images = decode_latent_images(xm, latent, cameras, rendering_mode=render_mode)
+                    # display(gif_widget(images))
+                time_record[data['id']]['rendering_end']=time.time()
+                
+                # for image in images:
+                #     data = io.BytesIO()
+                #     image.save(data, format='PNG')
+                #     display(Image(data=data.getvalue()))
+                if save_fig:
+                    for i, image in enumerate(images):
+                        filename = f"shap_e_output_fig_{i}.png"
+                        image.save(filename, format='PNG')
+                    
+                if timing_mode:
+                    print("end timing rendering process")
+                    end_time=time.time()
+                    duration=end_time-start_time
+                    print(f"runtime for rendering process: {duration} seconds")
+                
+                if gpu_mode:
+                    old_gpu_memory=gpu_memory
+                    gpu_memory = get_gpu_memory_usage()
+                    rendering_gpu_memory=gpu_memory-old_gpu_memory
+                    print(f"GPU Memory Usage for Rendering: {rendering_gpu_memory} MiB")
+                    print(f"Total GPU Memory Usage: {gpu_memory} MiB")
+                
+                if gpu_mode:
+                    gpu_moniter.end_monitor()
+                    print("Total GPU Memory Usage")
+                    gpu_moniter.mem_plot()
+                    print("Util GPU Memory Usage")
+                    gpu_moniter.mem_plot('util')
+                    print("Volatile GPU Memory Usage")
+                    gpu_moniter.mem_plot('vol')
+                    print("GPU Power Consumption")
+                    gpu_moniter.mem_plot('power')
+            except HTTPError as e:
+                print("An HTTP error occurred:", e.code, e.reason)
+            except Exception as e:
+                print("An error occurred:", str(e))
     
 if __name__=="__main__":
     main()
