@@ -151,7 +151,7 @@ def main():
     data_count=0
     
     for data in coco_data:
-        if data_count>=1:
+        if data_count>=100:
             diffusion_latency=0
             rendering_latency=0
             for key in time_record:
@@ -161,7 +161,7 @@ def main():
                 rendering_latency+=time_record[key]['rendering_latency']
             diffusion_latency=diffusion_latency/data_count
             rendering_latency=rendering_latency/data_count
-            outfile = open("shap_e_text_transmitter_stf.txt", "a")
+            outfile = open("./data_result/shap_e_text_transmitter_stf.txt", "a")
             print(time_record, file=outfile)
             print(f"diffusion_latency={diffusion_latency} seconds", file=outfile)
             print(f"renderinging_latency={rendering_latency} seconds", file=outfile)

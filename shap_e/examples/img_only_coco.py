@@ -126,7 +126,7 @@ def main():
     if gpu_mode:
         gpu_memory = get_gpu_memory_usage()
     
-    xm = load_model('transmitter', device=device)
+    xm = load_model('decoder', device=device)
     model = load_model('image300M', device=device)
     diffusion = diffusion_from_config(load_config('diffusion'))
     
@@ -145,26 +145,30 @@ def main():
     with tempfile.TemporaryDirectory() as temp_dir:
         print("Temporary directory created:", temp_dir)
         for data in coco_img_data['images']:
-            if data_count>=3:
+            if data_count>=1:
                 diffusion_latency=0
                 rendering_latency=0
                 for key in time_record:
+                    # print(key)
+                    # print(time_record[key])
                     time_record[key]['diffusion_latency']=time_record[key]['diffusion_end']-time_record[key]['diffusion_begin']
                     diffusion_latency+=time_record[key]['diffusion_latency']
                     time_record[key]['rendering_latency']=time_record[key]['rendering_end']-time_record[key]['rendering_begin']
                     rendering_latency+=time_record[key]['rendering_latency']
                 diffusion_latency=diffusion_latency/data_count
                 rendering_latency=rendering_latency/data_count
-                print(time_record)
-                print(f"diffusion_latency={diffusion_latency}")
-                print(f"renderinging_latency={rendering_latency}")
+                outfile = open("./data_result/shap_e_img_decoder_nerf.txt", "a")
+                print(time_record, file=outfile)
+                print(f"diffusion_latency={diffusion_latency}", file=outfile)
+                print(f"renderinging_latency={rendering_latency}", file=outfile)
+                outfile.close()
                 break
         
             data_count+=1
             batch_size = 1
             guidance_scale = 3.0
             
-            time_record['current_id']=data['id']
+            # time_record['current_id']=data['id']
             img_url=data['url']
             filename = os.path.basename(img_url)
             image_path = os.path.join(temp_dir, filename)
