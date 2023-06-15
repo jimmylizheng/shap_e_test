@@ -181,6 +181,9 @@ def main():
                 # image = load_image("./shap_e/examples/example_data/corgi.png")
                 image = load_image(image_path)
                 
+                # print(img_url)
+                # continue
+                
                 if gpu_mode:
                     old_gpu_memory=gpu_memory
                     gpu_memory = get_gpu_memory_usage()
@@ -271,8 +274,10 @@ def main():
                     print("GPU Power Consumption")
                     gpu_moniter.mem_plot('power')
             except HTTPError as e:
+                data_count-=1
                 print("An HTTP error occurred:", e.code, e.reason)
             except Exception as e:
+                data_count-=1
                 print("An error occurred:", str(e))
     
 if __name__=="__main__":
