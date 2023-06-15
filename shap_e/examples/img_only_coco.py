@@ -117,8 +117,8 @@ class GPU_moniter:
 
 def main():
     gpu_mode=False
-    timing_mode=False
-    save_fig=False
+    timing_mode=True
+    save_fig=True
     if gpu_mode:
         gpu_moniter=GPU_moniter(1)
     
@@ -146,7 +146,7 @@ def main():
     with tempfile.TemporaryDirectory() as temp_dir:
         print("Temporary directory created:", temp_dir)
         for data in coco_img_data['images']:
-            if data_count>=100:
+            if data_count>=3:
                 diffusion_latency=0
                 rendering_latency=0
                 for key in time_record:
@@ -158,7 +158,7 @@ def main():
                     rendering_latency+=time_record[key]['rendering_latency']
                 diffusion_latency=diffusion_latency/data_count
                 rendering_latency=rendering_latency/data_count
-                outfile = open("./data_result/shap_e_img_decoder_nerf.txt", "a")
+                outfile = open("./data_result/shap_e_img_decoder_stf.txt", "a")
                 print(time_record, file=outfile)
                 print(f"diffusion_latency={diffusion_latency}", file=outfile)
                 print(f"renderinging_latency={rendering_latency}", file=outfile)
@@ -231,7 +231,7 @@ def main():
                     print("start timing rendering process")
                     start_time=time.time()
                 
-                render_mode = 'nerf' # you can change this to 'stf' for mesh rendering
+                render_mode = 'stf' # you can change this to 'stf' for mesh rendering
                 size = 64 # this is the size of the renders; higher values take longer to render.
                 
                 time_record[data['id']]['rendering_begin']=time.time()
@@ -249,6 +249,8 @@ def main():
                     for i, image in enumerate(images):
                         filename = f"shap_e_output_fig_{i}.png"
                         image.save(filename, format='PNG')
+                        
+                # time_record[data['id']]['rendering_end']=time.time()
                     
                 if timing_mode:
                     print("end timing rendering process")
