@@ -21,8 +21,8 @@ import json
 def main():
     # Open the file in write mode
     xm_name = 'transmitter'
-    model_name='text300M'
-    sys.stdout = open('load-text300M-transmitter.txt', 'a')
+    # model_name='image300M'
+    sys.stdout = open('load-transmitter.txt', 'a')
     init_t=time.time()
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -30,9 +30,9 @@ def main():
 
     xm = load_model(xm_name, device=device)
 
-    model = load_model(model_name, device=device)
+    # model = load_model(model_name, device=device)
 
-    diffusion = diffusion_from_config(load_config('diffusion'))
+    # diffusion = diffusion_from_config(load_config('diffusion'))
 
     print(f"{time.time()-init_t}")
     # Remember to close the file to ensure everything is saved
