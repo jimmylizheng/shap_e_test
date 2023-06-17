@@ -11,6 +11,6 @@ def mean_calc(filename):
     # Print the mean value
     print(f"Mean loading latency for {filename}: {mean} seconds")
     
-file_list=['load-image300M-decoder','load-text300M-decoder','load-image300M-transmitter','load-text300M-transmitter']
+file_list=['load-image300M-decoder','load-text300M-decoder','load-image300M-transmitter','load-text300M-transmitter','load-decoder','load-transmitter']
 for file_nm in file_list:
     mean_calc(file_nm)

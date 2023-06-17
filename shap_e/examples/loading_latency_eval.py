@@ -20,9 +20,9 @@ import json
 
 def main():
     # Open the file in write mode
-    xm_name = 'transmitter'
+    xm_name = 'decoder'
     # model_name='image300M'
-    sys.stdout = open('load-transmitter.txt', 'a')
+    sys.stdout = open('load-decoder.txt', 'a')
     init_t=time.time()
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
