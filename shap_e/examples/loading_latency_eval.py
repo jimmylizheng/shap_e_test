@@ -18,28 +18,39 @@ import sys
 import json
 
 
+def get_gpu_memory_usage():
+    output = subprocess.check_output(['nvidia-smi', '--query-gpu=memory.used', '--format=csv,nounits,noheader'])
+    memory_used = re.findall(r'\d+', output.decode('utf-8'))
+    return int(memory_used[0])
+
 def main():
     # Open the file in write mode
     xm_name = 'decoder'
-    # model_name='image300M'
-    sys.stdout = open('load-decoder.txt', 'a')
+    model_name='image300M'
+    # sys.stdout = open('load-text300M-trans-mix.txt', 'a')
     init_t=time.time()
+    print(f"b{get_gpu_memory_usage()}")
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
 
     xm = load_model(xm_name, device=device)
+    
+    print(f"d{get_gpu_memory_usage()}")
+    print(f"d{time.time()-init_t}")
 
-    # model = load_model(model_name, device=device)
+    model = load_model(model_name, device=device)
 
-    # diffusion = diffusion_from_config(load_config('diffusion'))
+    diffusion = diffusion_from_config(load_config('diffusion'))
+    
+    print(f"e{get_gpu_memory_usage()}")
 
-    print(f"{time.time()-init_t}")
-    # Remember to close the file to ensure everything is saved
-    sys.stdout.close()
+    print(f"e{time.time()-init_t}")
+    # # Remember to close the file to ensure everything is saved
+    # sys.stdout.close()
 
-    # Reset the stdout to its default value (the console)
-    sys.stdout = sys.__stdout__
+    # # Reset the stdout to its default value (the console)
+    # sys.stdout = sys.__stdout__
     
 
 if __name__ == "__main__":
