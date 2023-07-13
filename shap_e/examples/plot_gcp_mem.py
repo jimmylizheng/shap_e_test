@@ -69,38 +69,39 @@ def main():
             odr=10
         plt.plot(timestamps, measured_val,label=label_dict[file_name],linestyle=lines,linewidth=3,zorder=odr)
     
-    dot_size=60
+    dot_size=130
     # data points for img diffusion model start
-    plt.scatter(39.9751398563385, 4709,c='black',s=dot_size,zorder=10,marker='s') # dec nerf
-    plt.scatter(40.46715545654297, 4709,c='black',s=dot_size,zorder=10,marker='s') # dec stf
-    plt.scatter(43.11763572692871, 5546,c='black',s=dot_size,zorder=10,marker='s') # trans nerf
-    plt.scatter(44.48019242286682, 5546,c='black',s=dot_size,zorder=10,marker='s') # trans stf
+    plt.scatter(24.555876970291138, 4709,c='black',s=dot_size,zorder=10,marker='s') # dec nerf
+    plt.scatter(24.422446727752686, 4709,c='black',s=dot_size,zorder=10,marker='s') # dec stf
+    plt.scatter(29.104807138442993, 5546,c='black',s=dot_size,zorder=10,marker='s') # trans nerf
+    plt.scatter(29.262850284576416, 5546,c='black',s=dot_size,zorder=10,marker='s') # trans stf
     
     # data points for img decoder model start
-    plt.scatter(95.14208674430847, 5569,c='black',s=dot_size,zorder=10,marker='^') # dec nerf
-    plt.scatter(94.41113615036011, 5569,c='black',s=dot_size,zorder=10,marker='^') # dec stf
-    plt.scatter(98.7299256324768, 6349,c='black',s=dot_size,zorder=10,marker='^') # trans nerf
-    plt.scatter(98.4405107498169, 6349,c='black',s=dot_size,zorder=10,marker='^') # trans stf
+    plt.scatter(79.34231781959534, 5569,c='black',s=dot_size,zorder=10,marker='^') # dec nerf
+    plt.scatter(79.39280557632446, 5569,c='black',s=dot_size,zorder=10,marker='^') # dec stf
+    plt.scatter(87.48783802986145, 6349,c='black',s=dot_size,zorder=10,marker='^') # trans nerf
+    plt.scatter(87.33576226234436, 6349,c='black',s=dot_size,zorder=10,marker='^') # trans stf
 
     # # data points for text diffusion model start
-    # plt.scatter(38.56686091423035, 4717,c='black',s=dot_size,zorder=10,marker='s') # dec nerf
-    # plt.scatter(38.940399169921875, 4717,c='black',s=dot_size,zorder=10,marker='s') # dec stf
-    # plt.scatter(44.130261182785034, 5545,c='black',s=dot_size,zorder=10,marker='s') # trans nerf
-    # plt.scatter(45.02914643287659, 5545,c='black',s=dot_size,zorder=10,marker='s') # trans stf
+    # plt.scatter(24.42529797554016, 4717,c='black',s=dot_size,zorder=10,marker='s') # dec nerf
+    # plt.scatter(24.0952308177948, 4717,c='black',s=dot_size,zorder=10,marker='s') # dec stf
+    # plt.scatter(28.524860382080078, 5545,c='black',s=dot_size,zorder=10,marker='s') # trans nerf
+    # plt.scatter(28.121957540512085, 5545,c='black',s=dot_size,zorder=10,marker='s') # trans stf
     
     # # data points for text decoder model start
-    # plt.scatter(62.75246572494507, 5267,c='black',s=dot_size,zorder=10,marker='^') # dec nerf
-    # plt.scatter(62.1445369720459, 5267,c='black',s=dot_size,zorder=10,marker='^') # dec stf
-    # plt.scatter(67.60589289665222, 6129,c='black',s=dot_size,zorder=10,marker='^') # trans nerf
-    # plt.scatter(68.661550283432, 6259,c='black',s=dot_size,zorder=10,marker='^') # trans stf
+    # plt.scatter(48.563472509384155, 5267,c='black',s=dot_size,zorder=10,marker='^') # dec nerf
+    # plt.scatter(47.99318504333496, 5267,c='black',s=dot_size,zorder=10,marker='^') # dec stf
+    # plt.scatter(51.8691771030426, 6129,c='black',s=dot_size,zorder=10,marker='^') # trans nerf
+    # plt.scatter(51.547693729400635, 6259,c='black',s=dot_size,zorder=10,marker='^') # trans stf
 
     # plt.scatter(241.634019613266, 5841,c='black',s=20,zorder=10,marker='^')
     
-    plt.xlim(0,110)
+    plt.xlim(0,130)
     plt.ylim(0,13000)
     plt.xticks(fontsize=27)
     plt.yticks(fontsize=27)
     plt.legend(fontsize=25,loc='upper left')
+    # plt.legend(fontsize=25,loc='lower right')
     plt.grid(True)
     # plt.savefig('./shap-e-mem-plot-gcp.png')
     plt.savefig('./shap-e-mem-plot-img-gcp.png')
@@ -109,3 +110,29 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# data for plots on small vm
+# # data points for img diffusion model start
+# plt.scatter(39.9751398563385, 4709,c='black',s=dot_size,zorder=10,marker='s') # dec nerf
+# plt.scatter(40.46715545654297, 4709,c='black',s=dot_size,zorder=10,marker='s') # dec stf
+# plt.scatter(43.11763572692871, 5546,c='black',s=dot_size,zorder=10,marker='s') # trans nerf
+# plt.scatter(44.48019242286682, 5546,c='black',s=dot_size,zorder=10,marker='s') # trans stf
+
+# # data points for img decoder model start
+# plt.scatter(95.14208674430847, 5569,c='black',s=dot_size,zorder=10,marker='^') # dec nerf
+# plt.scatter(94.41113615036011, 5569,c='black',s=dot_size,zorder=10,marker='^') # dec stf
+# plt.scatter(98.7299256324768, 6349,c='black',s=dot_size,zorder=10,marker='^') # trans nerf
+# plt.scatter(98.4405107498169, 6349,c='black',s=dot_size,zorder=10,marker='^') # trans stf
+
+# # data points for text diffusion model start
+# plt.scatter(38.56686091423035, 4717,c='black',s=dot_size,zorder=10,marker='s') # dec nerf
+# plt.scatter(38.940399169921875, 4717,c='black',s=dot_size,zorder=10,marker='s') # dec stf
+# plt.scatter(44.130261182785034, 5545,c='black',s=dot_size,zorder=10,marker='s') # trans nerf
+# plt.scatter(45.02914643287659, 5545,c='black',s=dot_size,zorder=10,marker='s') # trans stf
+
+# # data points for text decoder model start
+# plt.scatter(62.75246572494507, 5267,c='black',s=dot_size,zorder=10,marker='^') # dec nerf
+# plt.scatter(62.1445369720459, 5267,c='black',s=dot_size,zorder=10,marker='^') # dec stf
+# plt.scatter(67.60589289665222, 6129,c='black',s=dot_size,zorder=10,marker='^') # trans nerf
+# plt.scatter(68.661550283432, 6259,c='black',s=dot_size,zorder=10,marker='^') # trans stf

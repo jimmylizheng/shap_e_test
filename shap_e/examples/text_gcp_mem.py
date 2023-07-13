@@ -118,8 +118,8 @@ class GPU_moniter:
         json_str = json.dumps(output_dict)
 
         # Write the JSON string to a file
-        # with open("text300M-transmitter-stf.json", "w") as file:
-        #     file.write(json_str)
+        with open("text300M-decoder-nerf.json", "w") as file:
+            file.write(json_str)
         
     def mem_plot(self, mode='mem'):
         if mode=='mem':
@@ -135,11 +135,13 @@ class GPU_moniter:
 
 def main():
     # Open the file in write mode
-    xm_name = 'transmitter'
+    xm_name = 'decoder'
+    # xm_name = 'decoder'
     model_name='text300M'
-    render_mode = 'stf'
+    render_mode = 'nerf'
+    # render_mode = 'nerf'
     outfile_name=model_name+"-"+xm_name+"-"+render_mode+".txt"
-    # sys.stdout = open(outfile_name, 'w')
+    sys.stdout = open(outfile_name, 'w')
     # sys.stdout = open('text300M-transmitter-stf.txt', 'w')
 
     gpu_mode=True
@@ -274,11 +276,11 @@ def main():
     #     print("GPU Power Consumption")
     #     gpu_moniter.mem_plot('power')
     
-    # # Remember to close the file to ensure everything is saved
-    # sys.stdout.close()
+    # Remember to close the file to ensure everything is saved
+    sys.stdout.close()
 
-    # # Reset the stdout to its default value (the console)
-    # sys.stdout = sys.__stdout__
+    # Reset the stdout to its default value (the console)
+    sys.stdout = sys.__stdout__
     
 
 if __name__ == "__main__":

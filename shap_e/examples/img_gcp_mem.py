@@ -116,7 +116,7 @@ class GPU_moniter:
         json_str = json.dumps(output_dict)
 
         # Write the JSON string to a file
-        with open("image300M-decoder-nerf.json", "w") as file:
+        with open("tmpimage300M-decoder-stf.json", "w") as file:
             file.write(json_str)
         
     def mem_plot(self, mode='mem'):
@@ -135,10 +135,10 @@ def main():
     # Open the file in write mode
     xm_name = 'decoder'
     model_name='image300M'
-    render_mode = 'nerf'
-    outfile_name=model_name+"-"+xm_name+"-"+render_mode+".txt"
+    render_mode = 'stf'
+    outfile_name=model_name+"-"+xm_name+"-"+render_mode+"tmp.txt"
     sys.stdout = open(outfile_name, 'w')
-    sys.stdout = open('image300M-decoder-nerf.txt', 'w')
+    # sys.stdout = open('image300M-decoder-nerf.txt', 'w')
     gpu_mode=True
     timing_mode=True
     save_fig=False

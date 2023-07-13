@@ -24,33 +24,59 @@ def get_gpu_memory_usage():
     return int(memory_used[0])
 
 def main():
+    # device = torch.device("cuda")
+    # # Get the amount of total memory in bytes
+    # total_memory = torch.cuda.get_device_properties(device).total_memory
+    # print(total_memory)
+    # return
+    
     # Open the file in write mode
-    xm_name = 'decoder'
-    model_name='image300M'
-    # sys.stdout = open('load-text300M-trans-mix.txt', 'a')
-    init_t=time.time()
-    print(f"b{get_gpu_memory_usage()}")
+    xm_name = 'transmitter'
+    model_name='text300M'
+    sys.stdout = open('load-text300M.txt', 'a')
+    # init_t=time.time()
+    # print(f"b{get_gpu_memory_usage()}")
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    
-
-    xm = load_model(xm_name, device=device)
-    
-    print(f"d{get_gpu_memory_usage()}")
-    print(f"d{time.time()-init_t}")
-
+    init_t=time.time()
+    # init_g=get_gpu_memory_usage()
     model = load_model(model_name, device=device)
-
     diffusion = diffusion_from_config(load_config('diffusion'))
+    # xm = load_model(xm_name, device=device)
+    # print(f"e{get_gpu_memory_usage()-init_g}")
+    print(f"{time.time()-init_t}")
     
-    print(f"e{get_gpu_memory_usage()}")
+    # torch.save(xm, 'decoder_all.pt')
+    # init_t=time.time()
+    # init_g=get_gpu_memory_usage()
+    # print(f"d{get_gpu_memory_usage()}")
+    # print(f"d{time.time()-init_t}")
+    # xm = load_model(xm_name, device=device)
+    # model = load_model(model_name, device=device)
+    # model1 = torch.load('img300_all.pt')
 
-    print(f"e{time.time()-init_t}")
-    # # Remember to close the file to ensure everything is saved
-    # sys.stdout.close()
+    # diffusion = diffusion_from_config(load_config('diffusion'))
+    # print(f"e{get_gpu_memory_usage()-init_g}")
+    # print(f"e{time.time()-init_t}")
+    
+    # init_t=time.time()
+    # init_g=get_gpu_memory_usage()
+    # # print(f"d{get_gpu_memory_usage()}")
+    # print(f"d{time.time()-init_t}")
 
-    # # Reset the stdout to its default value (the console)
-    # sys.stdout = sys.__stdout__
+    # # model = load_model(model_name, device=device)
+    # # model2 = torch.load('img300_all.pt')
+
+    # # diffusion = diffusion_from_config(load_config('diffusion'))
+    # print(f"e{get_gpu_memory_usage()-init_g}")
+    # print(f"e{time.time()-init_t}")
+    
+    # print(f"total: {get_gpu_memory_usage()}")
+    # Remember to close the file to ensure everything is saved
+    sys.stdout.close()
+
+    # Reset the stdout to its default value (the console)
+    sys.stdout = sys.__stdout__
     
 
 if __name__ == "__main__":

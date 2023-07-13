@@ -151,6 +151,6 @@ def load_model(
     #     if param.requires_grad:
     #         total_para_nums += param.numel()
     # print(f"Total number of parameters for {model_name} is {total_para_nums}")
-    
+    # torch.save(model, 'img300_all.pt')
     model.eval()
     return model
